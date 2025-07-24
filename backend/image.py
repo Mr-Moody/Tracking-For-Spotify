@@ -13,7 +13,7 @@ class Image():
     def __init__(self) -> None:
         pass
 
-    @error_catch
+    
     def dominant_colour(self, image_file:str) -> tuple:
         """
         Returns the dominant colour in the image
@@ -22,7 +22,7 @@ class Image():
         counts = np.bincount(myimg)
         return np.argmax(counts)
 
-    @error_catch
+    
     def average_colour(self, image_file:str):
         """
         Calculates the average colour of the image
@@ -34,7 +34,6 @@ class Image():
         return avg_color
     
     
-    @error_catch
     def download_parallel(self, cover_art_urls:list):
         """
         Opens a new thread for each album cover to be opened and downloaded
@@ -48,7 +47,7 @@ class Image():
                 x = threading.Thread(target=self.download_single_cover_art, args=cover_art)
                 x.start()
 
-    @error_catch
+    
     def download_single_cover_art(self, album_id, image_url):
         """
         Downloads the album cover art
@@ -57,7 +56,7 @@ class Image():
         with open(f"imgs/{album_id}.jpg", 'wb') as handler:
             handler.write(img_data)
 
-    @error_catch
+    
     def clear_imgs(self):
         """
         Used to remove all cover art from imgs folder, only for developmental testing
@@ -73,10 +72,9 @@ class Image():
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    @error_catch
+    
     def rgb_to_hsv(rgb:list[tuple]) -> tuple:
         """
         Converts an RGB array to a HSV
         """
         return colorsys.rgb_to_hsv(*rgb)
-    
