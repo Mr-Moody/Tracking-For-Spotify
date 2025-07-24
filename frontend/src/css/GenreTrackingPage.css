@@ -1,0 +1,57 @@
+
+#genre_tracking {
+    color: white;
+}
+
+.time_selector {
+    cursor: pointer;
+    display: table-cell;
+    text-align: center;
+    border: none;
+    background-color: var(--background_grey);
+    vertical-align: middle;
+}
+
+#table_body{
+    background-color: var(--background_grey);
+    position: absolute;
+    left: auto;
+    width: 90%;
+    padding-bottom: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 1%;
+    display: grid;
+    grid-template-columns: 5;
+}
+
+.genre_holder{
+    width: 100%;
+    background-color: var(--background_grey);
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.genre_name{
+    background-color: var(--background_grey);
+    padding: 5px;
+    width: max-content;
+    display: table-cell;
+}
+
+.stats_graph_button{
+    padding: 5px;
+    display: table-cell;
+}
+
+.genre_bar{
+    padding: 5px;
+    display: table-cell;
+    background-color: var(--spotify_green);
+    height: 25px;
+}
+
+#short_term{
+    background-color: var(--background_light_grey);
+}

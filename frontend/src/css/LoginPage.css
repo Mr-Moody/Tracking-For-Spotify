@@ -1,0 +1,59 @@
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Comfortaa", sans-serif;
+
+    --background_grey: #242424;
+    --background_black: #121313;
+    --text_grey: #767171;
+    --spotify_green: #1DB954;
+
+    background-color: var(--background_black);
+    color: white;
+}  
+
+.body{
+    margin-top: 150px;
+    height: 100%;
+    width: 100%;
+}
+
+
+.spotify_logo {
+    cursor: pointer;
+    display: table-cell;
+    background-color: var(--background_black);
+    min-width: 150px;
+    max-width: 15%;
+    padding: 35px;
+    position: static;
+}
+
+.sign_in_button {
+    width: 30%;
+    height: fit-content;
+    border-radius: 40px;
+    padding: 20px;
+    background: var(--spotify_green);
+    color: black;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: xx-large;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 33%;
+    align-self: center;
+}
+
+.title{
+    width: max-content;
+    align-self: center;
+    margin-left: 36%;
+    padding-top: 150px;
+    padding-bottom: 150px;
+    top: 20%;
+    font-size: 5vh;
+
+}

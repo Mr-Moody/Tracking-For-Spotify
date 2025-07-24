@@ -1,0 +1,7 @@
+Flask==2.3.3
+Flask-OAuthlib==0.9.6
+numpy==1.26.0
+opencv-python==4.8.1.78
+pyodbc==5.0.0
+requests==2.31.0
+Werkzeug==2.3.7
