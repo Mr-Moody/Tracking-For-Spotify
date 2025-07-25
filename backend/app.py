@@ -2,11 +2,12 @@ from flask import Flask, jsonify, redirect, render_template, request, session, R
 from flask_cors import CORS
 from os import environ
 from dotenv import load_dotenv
-from authlib.integrations.flask_client import OAuth
+from authlib.integrations.flask_client import OAuth, OAuthError
 from spotify import Spotify
 from database import DB
 from tools import date_quick_sort
 from util import sanitise
+from image import get_average_colour
 
 load_dotenv()
 
@@ -71,12 +72,41 @@ def spotify_authorized() -> tuple[Response, int]:
     #redirect to the song tracking page
     return redirect(f"{FRONTEND_URL}/song-tracking"), 302
 
+def get_valid_oauth_token():
+    oauth_token = session.get("oauth_token")
+    refresh_token = session.get("refresh_token")
+    if not oauth_token:
+        return None
+
+    try:
+        resp = oauth.spotify.get("me", token={"access_token": oauth_token, "token_type": "Bearer"})
+        if resp.status_code == 401 and refresh_token:
+            #attempt to refresh token
+            new_token = oauth.spotify.refresh_token(
+                "https://accounts.spotify.com/api/token",
+                refresh_token=refresh_token,
+                client_id=CLIENT_ID,
+                client_secret=CLIENT_SECRET,
+            )
+            session["oauth_token"] = new_token["access_token"]
+            if "refresh_token" in new_token:
+                session["refresh_token"] = new_token["refresh_token"]
+            return new_token["access_token"]
+        elif resp.status_code == 401:
+            # no refresh token need to login again
+            session.clear()
+            return None
+        return oauth_token
+    except OAuthError:
+        session.clear()
+        return None
+
 
 @app.route("/api/me")
 def me() -> tuple[Response, int]:
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
     if not oauth_token:
-        return jsonify({"user": None}), 401
+        return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
 
     resp = oauth.spotify.get("me", token={"access_token": oauth_token, "token_type": "Bearer"})
     user_account = resp.json()
@@ -98,10 +128,10 @@ def me() -> tuple[Response, int]:
 
 @app.route("/api/get-song-tracking/<string:date_range>", methods=["GET"])
 def get_song_tracking_table(date_range) -> tuple[Response, int]:
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
 
     if not oauth_token:
-        return jsonify({"status": "error", "error": f"User not authorised, missing oauth_token"}), 401
+        return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
     
     if date_range not in ["short_term", "medium_term", "long_term"]:
         return jsonify({"status":"error", "error":"Invalid date range"}), 400
@@ -115,7 +145,7 @@ def get_song_tracking_table(date_range) -> tuple[Response, int]:
 #receives ajax call from client to update the user's artist tracking data to be displayed to the user
 @app.route("/api/update-artist-table", methods=["POST"])
 def update_artist_tracking_table() -> tuple[Response, int]:
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
 
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
@@ -131,7 +161,7 @@ def update_artist_tracking_table() -> tuple[Response, int]:
 #receives ajax call from client to update the user's genre tracking data to be displayed to the user
 @app.route("/api/update-genre-table", methods=["POST"])
 def update_genre_tracking_table() -> tuple[Response, int]:
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
 
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
@@ -146,7 +176,7 @@ def update_genre_tracking_table() -> tuple[Response, int]:
 
 @app.route("/api/get-all-tags", methods=["POST"])
 def get_all_tags() -> tuple[Response, int]:
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
 
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
@@ -159,20 +189,24 @@ def get_all_tags() -> tuple[Response, int]:
     return jsonify({"status":"success", "tags":tags}), 200
 
 
-@app.route("/api/currently-playing", methods=["POST"])
+@app.route("/api/currently-playing", methods=["GET"])
 def currently_playing() -> tuple[Response, int]:
     """
     Returns the currently playing song to the webclient request
     """
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
 
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
 
 
     current = sp.get_currently_playing(oauth_token)
+    if "error" in current:
+        return jsonify({"status": "success", "current": None}), 200
 
-    return jsonify({"current":current}), 200
+    average_colour = get_average_colour(current["item"]["album"]["images"][0]["url"])
+
+    return jsonify({"status":"success", "current":current, "average_colour":average_colour}), 200
 
 
 @app.route("/api/tracking-graph", methods=["POST", "GET"])
@@ -180,7 +214,7 @@ def tracking_graph() -> tuple[Response, int]:
     """
     Returns the currently playing song to the webclient request
     """
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
 
@@ -210,7 +244,7 @@ def tracking_graph() -> tuple[Response, int]:
 
 @app.route("/api/create-tag", methods=["POST", "GET"])
 def create_tag() -> tuple[Response, int]:
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
 
@@ -263,7 +297,7 @@ def create_tag() -> tuple[Response, int]:
 
 @app.route("/api/delete-tag", methods=["POST", "GET"])
 def delete_tag() -> tuple[Response, int]:
-    oauth_token = session.get("oauth_token")
+    oauth_token = get_valid_oauth_token()
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
 

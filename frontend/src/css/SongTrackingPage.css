@@ -25,11 +25,11 @@ body {
 table{
     background-color: #181818;
     width: 90%;
-    margin: 40px auto 0 auto;
+    margin: 0px auto 80px auto;
     padding-bottom: 5%;
     padding-left: 5%;
     padding-right: 5%;
-    padding-top: 10px;
+    padding-top: 5px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
@@ -49,7 +49,7 @@ th, td {
     display: flex;
     justify-content: center;
     gap: 16px;
-    margin-top: 80px; /* Increased to ensure it appears below header */
+    margin-top: 110px;
     margin-bottom: 16px;
     z-index: 1;
     position: relative;

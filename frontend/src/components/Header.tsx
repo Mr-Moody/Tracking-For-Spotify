@@ -11,7 +11,7 @@ const Header: React.FC<HeaderProps> = ({ openSettings, sidePanelOpen }) => {
     <header>
       <img
         className="spotify_logo"
-        src="/static/imgs/logos/Spotify_Logo_RGB_Green.png"
+        src="/imgs/logos/Spotify_Logo_RGB_Green.png"
         title="Open Spotify"
         alt="Spotify Logo"
       />

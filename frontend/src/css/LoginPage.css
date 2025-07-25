@@ -1,33 +1,7 @@
-
-*{
-    margin: 0;
-    padding: 0;
-    font-family: "Comfortaa", sans-serif;
-
-    --background_grey: #242424;
-    --background_black: #121313;
-    --text_grey: #767171;
-    --spotify_green: #1DB954;
-
-    background-color: var(--background_black);
-    color: white;
-}  
-
 .body{
     margin-top: 150px;
     height: 100%;
     width: 100%;
-}
-
-
-.spotify_logo {
-    cursor: pointer;
-    display: table-cell;
-    background-color: var(--background_black);
-    min-width: 150px;
-    max-width: 15%;
-    padding: 35px;
-    position: static;
 }
 
 .sign_in_button {

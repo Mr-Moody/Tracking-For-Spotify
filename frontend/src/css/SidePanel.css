@@ -1,15 +1,3 @@
-*{
-    margin: 0;
-    padding: 0;
-    font-family: "Comfortaa", sans-serif;
-
-    --background_light_grey: #353535;
-    --background_grey: #242424;
-    --background_black: #121313;
-    --text_grey: #767171;
-    --spotify_green: #1DB954;
-}
-
 .side-panel {
     height: 100vh;
     min-width: 340px;

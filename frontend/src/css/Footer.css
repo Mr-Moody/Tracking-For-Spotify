@@ -1,12 +1,4 @@
-.currently_playing_box {
-    max-width: 40%;
-    position:fixed;
-    float: left;
-    display: table-cell;
-    visibility: hidden;
-}
-
-.filter_queue {
+.filter-queue {
     max-width: 200px;
     min-width: 50px;
     display: block;
@@ -18,10 +10,10 @@
 footer {
     background-color: #000;
     position: fixed;
-    bottom: -100px;
-    height: 100px;
+    bottom: 0;
+    height: 60px;
     width: 100%;
-    padding-bottom: 100px;
+    padding-bottom: 20px;
     display: table;
     box-shadow: 0px 0px 5px 5px #000;
 }
@@ -30,11 +22,74 @@ footer div {
     background-color: #000;
 }
 
-#currently_playing_box {
-    max-width: 40%;
-    position:fixed;
-    float: left;
-    display: table-row;
-    margin: 10px;
-    margin-left: 15px;
+.currently-playing-box {
+    width: 35%;
+    min-width: 250px;
+    max-width: 450px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    background: #111;
+    border-radius: 10px;
+    padding: 16px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    margin: 20px 0 0 20px;
+    position: relative;
+}
+
+.current-song-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.name-album-text-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    flex: 1;
+    background-color: #111;
+}
+
+.name-album-text-holder .span{
+    background-color: #111;
+}
+
+.current-song-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 2px;
+    color: #fff;
+}
+
+.current-song-artist {
+    font-size: 1rem;
+    color: #b3b3b3;
+    margin-bottom: 2px;
+}
+
+.current-song-album {
+    font-size: 0.95rem;
+    color: #b3b3b3;
+}
+
+.progress-bar-container {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 6px;
+    background: #222;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
