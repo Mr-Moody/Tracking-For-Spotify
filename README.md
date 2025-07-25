@@ -16,14 +16,14 @@ A React frontend built on a Python Flask backend allowing a user to track their 
 ### Environment variables
 Create a new `.env` file in the directory `/backend` and add the following constants:
 ```.env
-FLASK_HOST=127.0.0.1
+FLASK_HOST=localhost
 FLASK_PORT=5000
 FLASK_DEBUG=true
 FLASK_SECRET_KEY=`your-amazing-super-secret-key`
 
 CLIENT_ID=`Spotify-Client-ID`
 CLIENT_SECRET=`Spotify-Client-Secret`
-REDIRECT_URI=http://127.0.0.1:5000/auth/callback
+REDIRECT_URI=http://localhost:5000/auth/callback
 
 FRONTEND_URL=http://localhost:3000
 ```
@@ -34,7 +34,7 @@ FRONTEND_URL=http://localhost:3000
 - Go to your dashboard and press `'Create app'`
     - Add your custom app name: eg. `Tracking For Spotify`
     - Add your custom app description: eg. `Website to help users track their favourite artists!`
-    - Add Redirect URI: `http://127.0.0.1:5000/auth/callback`
+    - Add Redirect URI: `http://localhost:5000/auth/callback`
         > or change to a different URL/domain you wish to use instead but make sure it is the same as in your `.env` file.
 - Copy your Spotify app's *CLIENT_ID* and *CLIENT_SECRET* and add to your `.env` file.
 

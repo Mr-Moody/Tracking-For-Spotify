@@ -3,9 +3,10 @@ import "../css/Header.css";
 
 interface HeaderProps {
   openSettings: () => void;
+  sidePanelOpen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ openSettings }) => {
+const Header: React.FC<HeaderProps> = ({ openSettings, sidePanelOpen }) => {
   return (
     <header>
       <img
@@ -14,7 +15,13 @@ const Header: React.FC<HeaderProps> = ({ openSettings }) => {
         title="Open Spotify"
         alt="Spotify Logo"
       />
-      <button className="open-settings-button" onClick={openSettings}>&#9776;</button>
+      <button
+        className={`open-settings-button${sidePanelOpen ? ' rotated' : ''}`}
+        onClick={openSettings}
+        aria-label="Open settings"
+      >
+        &#9776;
+      </button>
     </header>
   );
 };

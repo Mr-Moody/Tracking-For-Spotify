@@ -20,14 +20,14 @@ const ArtistTrackingPage: React.FC = () => {
 
   return (
     <div>
-      {sidePanelOpen && <SidePanel closeSettings={closeSettings} user={user} />}
+      <SidePanel open={sidePanelOpen} closeSettings={closeSettings} user={user} />
 
       <div id="graph_holder">
         <div id="close_graph_button" onClick={closeGraph}>x</div>
         <canvas id="graph_canvas"></canvas>
       </div>
 
-      <Header openSettings={openSettings} />
+      <Header openSettings={openSettings} sidePanelOpen={sidePanelOpen} />
 
       <div className="button_holder">
             <button className="time_selector" id="short_term" onClick={updateTracking}>Previous 4 Weeks</button>

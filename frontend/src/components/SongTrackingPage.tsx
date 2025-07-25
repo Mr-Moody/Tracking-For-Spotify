@@ -2,76 +2,168 @@ import React, { useState, useEffect } from "react";
 import SidePanel from "./SidePanel";
 import Header from "./Header";
 import Footer from "./Footer";
-// import any icon library as needed
+import SongTrackingCard from "./SongTrackingCard";
+import { Line } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { API_URL } from "../constants";
+import "../css/SongTrackingPage.css";
+import { useUser } from "../UserContext";
 
-// Placeholder for song data
-const mockSongs = [
-  {
-    id: "1",
-    index: 1,
-    cover_art: "https://via.placeholder.com/50",
-    track_name: "Song 1",
-    track_album: "Album 1",
-    track_artists: "Artist 1",
-  },
-  {
-    id: "2",
-    index: 2,
-    cover_art: "https://via.placeholder.com/50",
-    track_name: "Song 2",
-    track_album: "Album 2",
-    track_artists: "Artist 2",
-  },
-];
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
+interface Song {
+    id: string;
+    index: number;
+    cover_art: string;
+    track_name: string;
+    track_album: string;
+    track_artists: string;
+}
 
 const SongTrackingPage: React.FC = () => {
-  const [songs, setSongs] = useState(mockSongs);
-  const [sidePanelOpen, setSidePanelOpen] = useState(false);
+    const [songs, setSongs] = useState<Song[]>([]);
+    const [sidePanelOpen, setSidePanelOpen] = useState(false);
+    const [selectedTerm, setSelectedTerm] = useState<string>("short_term");
+    const [graphData, setGraphData] = useState<{dates: string[], ranks: number[]} | null>(null);
+    const [graphSongId, setGraphSongId] = useState<string | null>(null);
+    const { user } = useUser();
 
-  const openSettings = () => setSidePanelOpen(true);
-  const closeSettings = () => setSidePanelOpen(false);
+    useEffect(() => {
+        fetchSongs(selectedTerm);
+    }, [selectedTerm]);
 
-  const updateTracking = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // TODO: Implement API call to update songs based on time range
-  };
+    const fetchSongs = async (term: string) => {
+        try {
+            const response = await fetch(`${API_URL}/api/get-song-tracking/${term}`, {
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            });
+            const data = await response.json();
 
-  const viewTrackingHistory = (id: string) => {
-    // TODO: Implement graph modal logic
-  };
+            if (data.status === "success") {
+                setSongs(data.tracking_table || []);
+            } else {
+                console.error("Error fetching songs:", data.error);
+                return;
+            }
+        } catch (error) {
+            console.error("Failed to fetch songs:", error);
+        }
+    };
 
-  return (
-    <div>
-      {sidePanelOpen && <SidePanel closeSettings={closeSettings} user={undefined} />}
-      <Header openSettings={openSettings} />
-      <div className="button_holder">
-        <button className="time_selector" id="short_term" onClick={updateTracking}>Previous 4 Weeks</button>
-        <button className="time_selector" id="medium_term" onClick={updateTracking}>Previous 6 Months</button>
-        <button className="time_selector" id="long_term" onClick={updateTracking}>Previous Year</button>
-      </div>
-      <table>
-        <tbody id="table_body">
-          {songs.map((item) => (
-            <tr key={item.id}>
-              <th>
-                <div className="stats_graph_button" id={item.id} onClick={() => viewTrackingHistory(item.id)}>
-                  {/* TODO: Add icon */}
-                  [icon]
+    const handleTermClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        setSelectedTerm(e.currentTarget.id);
+    };
+
+    const viewTrackingHistory = async (id: string) => {
+        try {
+            const response = await fetch(`${API_URL}/api/tracking-graph`, {
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "song", term: selectedTerm, id })
+            });
+            const data = await response.json();
+            setGraphData({ dates: data.dates, ranks: data.ranks });
+            setGraphSongId(id);
+        } catch (error) {
+            console.error("Failed to fetch graph data:", error);
+        }
+    };
+
+    const closeGraph = () => {
+        setGraphData(null);
+        setGraphSongId(null);
+    };
+
+    const openSettings = () => setSidePanelOpen(true);
+    const closeSettings = () => setSidePanelOpen(false);
+
+    // Chart.js data and options
+    const chartData = graphData ? {
+        labels: graphData.dates,
+        datasets: [
+            {
+                label: 'Rank',
+                data: graphData.ranks,
+                fill: false,
+                backgroundColor: '#1DB954',
+                borderColor: '#1DB954',
+                tension: 0.2,
+            },
+        ],
+    } : undefined;
+
+    const chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Song Tracking History' },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                min: 1,
+                reverse: true,
+                ticks: {
+                    stepSize: 1,
+                    callback: function(tickValue: string | number) {
+                        if (typeof tickValue === 'number' && Number.isInteger(tickValue)) {
+                            return tickValue;
+                        }
+                        return null;
+                    }
+                }
+            },
+            x: {
+                ticks: {
+                    maxTicksLimit: 8
+                }
+            }
+        }
+    };
+
+    return (
+        <div className="content-wrapper">
+            <SidePanel open={sidePanelOpen} closeSettings={closeSettings} user={user || undefined} />
+            <Header openSettings={openSettings} sidePanelOpen={sidePanelOpen} />
+            <div className="button-holder">
+                <button className="time-selector" id="short_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "short_term" ? "#353535" : "#242424" }}>Previous 4 Weeks</button>
+                <button className="time-selector" id="medium_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "medium_term" ? "#353535" : "#242424" }}>Previous 6 Months</button>
+                <button className="time-selector" id="long_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "long_term" ? "#353535" : "#242424" }}>Previous Year</button>
+            </div>
+            <table>
+                <tbody id="table-body">
+                    {songs.map((item) => (
+                        <SongTrackingCard key={item.id} {...item} viewTrackingHistory={viewTrackingHistory} />
+                    ))}
+                </tbody>
+            </table>
+            {graphData && (
+                <div id="graph-holder" style={{ visibility: "visible", height: "300px", width: "400px", transition: "0.5s" }}>
+                    <div id="closegraphbutton" onClick={closeGraph} style={{ cursor: "pointer" }}>x</div>
+                    <Line data={chartData!} options={chartOptions} />
                 </div>
-              </th>
-              <th className="cell">{item.index}</th>
-              <th className="image_holder">
-                <img src={item.cover_art} alt="cover art" id="cover_art" />
-              </th>
-              <th className="cell">{item.track_name}</th>
-              <th className="cell">{item.track_album}</th>
-              <th className="cell">{item.track_artists}</th>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <Footer />
-    </div>
-  );
+            )}
+            <Footer />
+        </div>
+    );
 };
 
 export default SongTrackingPage;
