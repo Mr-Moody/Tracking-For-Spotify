@@ -110,7 +110,7 @@ def me() -> tuple[Response, int]:
 
     resp = oauth.spotify.get("me", token={"access_token": oauth_token, "token_type": "Bearer"})
     user_account = resp.json()
-    # Always use the first image in the images array if available
+
     profile_image = None
     if user_account.get("images") and isinstance(user_account["images"], list) and len(user_account["images"]) > 0:
         profile_image = user_account["images"][0]["url"]

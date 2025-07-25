@@ -95,16 +95,15 @@ const SongTrackingPage: React.FC = () => {
     const openSettings = () => setSidePanelOpen(true);
     const closeSettings = () => setSidePanelOpen(false);
 
-    // Chart.js data and options
     const chartData = graphData ? {
         labels: graphData.dates,
         datasets: [
             {
-                label: 'Rank',
+                label: "Rank",
                 data: graphData.ranks,
                 fill: false,
-                backgroundColor: '#1DB954',
-                borderColor: '#1DB954',
+                backgroundColor: "#1DB954",
+                borderColor: "#1DB954",
                 tension: 0.2,
             },
         ],
@@ -114,7 +113,7 @@ const SongTrackingPage: React.FC = () => {
         responsive: true,
         plugins: {
             legend: { display: false },
-            title: { display: true, text: 'Song Tracking History' },
+            title: { display: true, text: "Song Tracking History" },
         },
         scales: {
             y: {
@@ -124,7 +123,7 @@ const SongTrackingPage: React.FC = () => {
                 ticks: {
                     stepSize: 1,
                     callback: function(tickValue: string | number) {
-                        if (typeof tickValue === 'number' && Number.isInteger(tickValue)) {
+                        if (typeof tickValue === "number" && Number.isInteger(tickValue)) {
                             return tickValue;
                         }
                         return null;
