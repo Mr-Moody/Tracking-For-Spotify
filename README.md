@@ -19,10 +19,10 @@ Create a new `.env` file in the directory `/backend` and add the following const
 FLASK_HOST=localhost
 FLASK_PORT=5000
 FLASK_DEBUG=true
-FLASK_SECRET_KEY=`your-amazing-super-secret-key`
+FLASK_SECRET_KEY=your-amazing-super-secret-key
 
-CLIENT_ID=`Spotify-Client-ID`
-CLIENT_SECRET=`Spotify-Client-Secret`
+CLIENT_ID=Spotify-Client-ID
+CLIENT_SECRET=Spotify-Client-Secret
 REDIRECT_URI=http://localhost:5000/auth/callback
 
 FRONTEND_URL=http://localhost:3000
