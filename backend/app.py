@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth, OAuthError
 from spotify import Spotify
 from database import DB
-from tools import date_quick_sort
-from util import sanitise
+from util import date_quick_sort, sanitise
 from image import get_average_colour
 
 load_dotenv()
@@ -28,22 +27,22 @@ app = Flask(__name__)
 app.debug = FLASK_DEBUG
 
 app.secret_key = environ.get("FLASK_SECRET_KEY", "secret_alternative")
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = False
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = False
 
 CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 oauth = OAuth(app)
 oauth.register(
-    name='spotify',
+    name="spotify",
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
-    access_token_url='https://accounts.spotify.com/api/token',
+    access_token_url="https://accounts.spotify.com/api/token",
     access_token_params=None,
-    authorize_url='https://accounts.spotify.com/authorize',
+    authorize_url="https://accounts.spotify.com/authorize",
     authorize_params=None,
-    api_base_url='https://api.spotify.com/v1/',
-    client_kwargs={'scope': 'user-read-email playlist-modify-private playlist-modify-public playlist-read-private user-top-read user-read-currently-playing'}
+    api_base_url="https://api.spotify.com/v1/",
+    client_kwargs={"scope": "user-read-email playlist-modify-private playlist-modify-public playlist-read-private user-top-read user-read-currently-playing"}
 )
 
 @app.route("/")

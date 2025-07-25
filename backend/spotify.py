@@ -1,7 +1,5 @@
 import requests
 
-from tools import error_catch, value_quick_sort
-
 URL = "https://api.spotify.com/v1/" #base API HTTP address
 
 class Spotify():
@@ -15,7 +13,6 @@ class Spotify():
         }
 
 
-    @error_catch
     def get_user_account(self, auth_token:str) -> dict:
         """
         gets the user's account details including name, display name, profile picture, and email
@@ -28,8 +25,7 @@ class Spotify():
 
         return user
     
-    
-    @error_catch
+
     def get_track_ids(self, items:list) -> list:
         """
         Used to extract the track ids from a JSON file received by Spotify API into a single list
@@ -40,7 +36,6 @@ class Spotify():
         return items
 
 
-    @error_catch
     def get_track_details(self, auth_token:str, track_id:str) -> dict:
         """
         Returns a JSON of all the details of the track
@@ -48,8 +43,7 @@ class Spotify():
         track_details = requests.get(URL + "tracks/" + track_id, headers=self.headers(auth_token)).json() #requests all of the details for a single track into JSON file
         return track_details
     
-    
-    @error_catch
+ 
     def get_multiple_tracks(self, auth_token:str, track_ids:list) -> dict:
         """
         Returns a JSON of all the details of the tracks
@@ -58,8 +52,7 @@ class Spotify():
         track_details = requests.get(URL + "tracks?ids=" + tracks, headers=self.headers(auth_token)).json() #requests details for multiple tracks at once
         return track_details
 
-            
-    @error_catch
+
     def get_album_id(self, auth_token:str, track_id:str):
         """
         Returns the album id for any given track id
@@ -68,8 +61,7 @@ class Spotify():
         album_id = track["album"]["id"]
         return album_id
            
-            
-    @error_catch
+
     def get_album_details(self, auth_token:str, album_id:str):
         """
         Returns all the data for the album from the album id
@@ -77,8 +69,7 @@ class Spotify():
         album = requests.get(URL + f"albums/{album_id}", headers=self.headers(auth_token)).json() #requests all the details for an artist's album
         return album
     
-    
-    @error_catch
+
     def get_album_cover_art(self, auth_token:str, album_id:str):
         """
         Returns the url for the cover art image of each album
@@ -87,8 +78,7 @@ class Spotify():
         cover_art = album_details["images"][0]["url"]
         return cover_art
             
-            
-    @error_catch
+
     def playlist_tracks(self, auth_token:str, playlist_id:str) -> list:
         """
         Returns all of the track details from the given playlist id in order
@@ -97,7 +87,6 @@ class Spotify():
         return tracks
 
 
-    @error_catch
     def next(self, auth_token:str, next) -> dict:
         """
         Returns the next elements from a request
@@ -106,7 +95,6 @@ class Spotify():
         return tracks
         
 
-    @error_catch
     def get_user_top_songs(self, auth_token:str, time_range:str, quantity:int):
         """
         Returns the users top listened to songs, defaults to top 50
@@ -118,11 +106,9 @@ class Spotify():
 
         response = requests.get(URL + f"me/top/tracks?time_range={time_range}&limit={quantity}", headers=self.headers(auth_token)).json()
 
-
         return response
 
 
-    @error_catch
     def get_song_tracking_table(self, tracks:dict) -> list:
         """
         Returns the users top songs as a list of JSONs {cover_art, track_name, track_album, track_artists} for sending to the webclient
@@ -148,7 +134,6 @@ class Spotify():
         return table
     
     
-    @error_catch
     def format_artist_tracking_table(self, artists:dict):
         table = []
 
@@ -165,8 +150,7 @@ class Spotify():
 
         return table
     
-    
-    @error_catch
+
     def format_genre_tracking_table(self, genres:dict):
         table = []
 
@@ -180,7 +164,6 @@ class Spotify():
         return table
     
     
-    @error_catch
     def get_user_top_artists(self, auth_token:str, time_range:str, quantity:int):
         """
         Returns the users top listened to songs, defaults to top 50
@@ -195,7 +178,6 @@ class Spotify():
         return response
     
     
-    @error_catch
     def get_user_top_genres(self, auth_token:str, time_range:str, quantity:int):
         """
         Returns the users top listened to songs, defaults to top 50
@@ -222,8 +204,6 @@ class Spotify():
                     
                 if not found:
                     all_genres.append({"name":genre, "value":1})
-                    
-        all_genres = value_quick_sort(all_genres)
 
         return all_genres
     
