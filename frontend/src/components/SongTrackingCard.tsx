@@ -14,22 +14,18 @@ interface SongTrackingCardProps {
 function SongTrackingCard(props: SongTrackingCardProps) {
     return (
         <tr key={props.id}>
-            <td>
-                <div
-                    className="stats-graph-button"
-                    id={props.id}
-                    onClick={() => props.viewTrackingHistory(props.id)}
-                >
+            <td className="song-cell">
+                <div className="song-stats-graph-button" id={props.id} onClick={() => props.viewTrackingHistory(props.id)}>
                     <MdIcons.MdOutlineBarChart />
                 </div>
             </td>
-            <td className="cell">{props.index}</td>
-            <td className="image-holder">
-                <img src={props.cover_art} alt="cover art" id="cover-art" />
+            <td className="song-cell">{props.index}</td>
+            <td className="song-image-holder">
+                <img src={props.cover_art} alt="cover art" className="song-cover-art" />
             </td>
-            <td className="cell">{props.track_name}</td>
-            <td className="cell">{props.track_album}</td>
-            <td className="cell">{props.track_artists}</td>
+            <td className="song-cell">{props.track_name}</td>
+            <td className="song-cell">{props.track_album}</td>
+            <td className="song-cell">{props.track_artists}</td>
         </tr>
     );
 }

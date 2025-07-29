@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import React, { useState } from "react";
 import "../css/SidePanel.css";
 import { MdPersonOutline } from "react-icons/md";
@@ -19,6 +19,8 @@ interface SidePanelProps {
 const SidePanel: React.FC<SidePanelProps> = ({ user, closeSettings, open }) => {
   const signOut = () => {};
   const [imgLoaded, setImgLoaded] = useState(false);
+
+  const location = useLocation();
 
   return (
     <div className={`side-panel${open ? ' open' : ''}`}>
@@ -41,17 +43,12 @@ const SidePanel: React.FC<SidePanelProps> = ({ user, closeSettings, open }) => {
             <span className="user-name">
               {user.display_name ? user.display_name : user.user_name}
             </span>
-          </div>
-        ) : (
-          // TODO: Replace with a React icon component for person-outline
-          <span className="empty-profile">[icon]</span>
-        )}
+          </div>) : (<span>User not logged in...</span>)}
       </div>
       <div className="page-locator-box">
-        <Link className="page-locator" id="song-tracking" to="/song-tracking">Song Tracking</Link>
-        <Link className="page-locator" id="artist-tracking" to="/artist-tracking">Artist Tracking</Link>
-        <Link className="page-locator" id="genre-tracking" to="/genre-tracking">Genre Tracking</Link>
-        <Link className="page-locator" id="tag-editor" to="/tag-editor">Tag Editor</Link>
+        <Link className={`page-locator${location.pathname.startsWith("/song-tracking") ? " active" : ""}`}id="song-tracking" to="/song-tracking">Song Tracking</Link>
+        <Link className={`page-locator${location.pathname.startsWith("/artist-tracking") ? " active" : ""}`} id="artist-tracking" to="/artist-tracking">Artist Tracking</Link>
+        <Link className={`page-locator${location.pathname.startsWith("/genre-tracking") ? " active" : ""}`} id="genre-tracking" to="/genre-tracking">Genre Tracking</Link>
       </div>
       <button className="sign-out-button" onClick={signOut}>Sign Out</button>
     </div>

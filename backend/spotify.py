@@ -144,8 +144,8 @@ class Spotify():
             artist_id = artist["id"]
 
             table.append({"index":index,
-                          "artist_name":artist_name,
-                          "artist_profile":artist_profile, 
+                          "name":artist_name,
+                          "image":artist_profile, 
                           "id":artist_id})
 
         return table

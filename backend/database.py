@@ -1,6 +1,6 @@
 import sqlite3
 
-from tools import generate_guid
+from util import generate_guid
 
 class DB():
     def __init__(self):

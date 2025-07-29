@@ -139,24 +139,24 @@ const SongTrackingPage: React.FC = () => {
     };
 
     return (
-        <div className="content-wrapper">
+        <div className="song-content-wrapper">
             <SidePanel open={sidePanelOpen} closeSettings={closeSettings} user={user || undefined} />
             <Header openSettings={openSettings} sidePanelOpen={sidePanelOpen} />
-            <div className="button-holder">
-                <button className="time-selector" id="short_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "short_term" ? "#353535" : "#242424" }}>Previous 4 Weeks</button>
-                <button className="time-selector" id="medium_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "medium_term" ? "#353535" : "#242424" }}>Previous 6 Months</button>
-                <button className="time-selector" id="long_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "long_term" ? "#353535" : "#242424" }}>Previous Year</button>
+            <div className="song-button-holder">
+                <button className="song-time-selector" id="short_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "short_term" ? "#353535" : "#242424" }}>Previous 4 Weeks</button>
+                <button className="song-time-selector" id="medium_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "medium_term" ? "#353535" : "#242424" }}>Previous 6 Months</button>
+                <button className="song-time-selector" id="long_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "long_term" ? "#353535" : "#242424" }}>Previous Year</button>
             </div>
-            <table>
-                <tbody id="table-body">
+            <table id="song-table-body">
+                <tbody>
                     {songs.map((item) => (
                         <SongTrackingCard key={item.id} {...item} viewTrackingHistory={viewTrackingHistory} />
                     ))}
                 </tbody>
             </table>
             {graphData && (
-                <div id="graph-holder" style={{ visibility: "visible", height: "300px", width: "400px", transition: "0.5s" }}>
-                    <div id="closegraphbutton" onClick={closeGraph} style={{ cursor: "pointer" }}>x</div>
+                <div id="song-graph-holder" style={{ visibility: "visible", height: "300px", width: "400px", transition: "0.5s" }}>
+                    <div id="close-graph-button" onClick={closeGraph} style={{ cursor: "pointer" }}>x</div>
                     <Line data={chartData!} options={chartOptions} />
                 </div>
             )}

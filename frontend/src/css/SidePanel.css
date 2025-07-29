@@ -157,6 +157,10 @@
     background: var(--background_grey);
 }
 
+.page-locator.active {
+    color: white;
+}
+
 .sign-out-button {
     width: 85%;
     margin: 40px auto 30px auto;
@@ -198,7 +202,6 @@
     height: 72px;
     width: 72px;
     border-radius: 50%;
-    background: #222;
     display: flex;
     align-items: center;
     justify-content: center;

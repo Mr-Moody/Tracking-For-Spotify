@@ -71,3 +71,6 @@ def date_quick_sort(items:list) -> list:
     right = date_quick_sort(right)
 
     return [*left, items[pivot], *right]
+
+if __name__ == "__main__":
+    print(generate_guid(16))

@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from tools import error_catch
 import requests
 import threading
 import os

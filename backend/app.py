@@ -141,18 +141,18 @@ def get_song_tracking_table(date_range) -> tuple[Response, int]:
     return jsonify({"status":"success", "tracking_table":tracking_table}), 200
 
 
-#receives ajax call from client to update the user's artist tracking data to be displayed to the user
-@app.route("/api/update-artist-table", methods=["POST"])
-def update_artist_tracking_table() -> tuple[Response, int]:
+@app.route("/api/get-artist-tracking/<string:date_range>", methods=["GET"])
+def get_artist_tracking_table(date_range) -> tuple[Response, int]:
     oauth_token = get_valid_oauth_token()
 
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
 
-    date_range = request.json["date_range"]
+    if date_range not in ["short_term", "medium_term", "long_term"]:
+        return jsonify({"status":"error", "error":"Invalid date range"}), 400
 
     artists = sp.get_user_top_artists(oauth_token, date_range, 50)
-    tracking_table = sp.format_artist_tracking_table(oauth_token, artists)
+    tracking_table = sp.format_artist_tracking_table(artists)
 
     return jsonify({"status":"success", "tracking_table":tracking_table}), 200
 
@@ -170,7 +170,6 @@ def update_genre_tracking_table() -> tuple[Response, int]:
     genres = sp.get_user_top_genres(oauth_token, date_range, 50)
 
     return jsonify({"status":"success", "genres":genres}), 200
-
 
 
 @app.route("/api/get-all-tags", methods=["POST"])
