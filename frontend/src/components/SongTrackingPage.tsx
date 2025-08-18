@@ -147,13 +147,13 @@ const SongTrackingPage: React.FC = () => {
                 <button className="song-time-selector" id="medium_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "medium_term" ? "#353535" : "#242424" }}>Previous 6 Months</button>
                 <button className="song-time-selector" id="long_term" onClick={handleTermClick} style={{ backgroundColor: selectedTerm === "long_term" ? "#353535" : "#242424" }}>Previous Year</button>
             </div>
-            <table id="song-table-body">
-                <tbody>
+            <div id="song-table-body">
+                <div className="song-list">
                     {songs.map((item) => (
                         <SongTrackingCard key={item.id} {...item} viewTrackingHistory={viewTrackingHistory} />
                     ))}
-                </tbody>
-            </table>
+                </div>
+            </div>
             {graphData && (
                 <div id="song-graph-holder" style={{ visibility: "visible", height: "300px", width: "400px", transition: "0.5s" }}>
                     <div id="close-graph-button" onClick={closeGraph} style={{ cursor: "pointer" }}>x</div>

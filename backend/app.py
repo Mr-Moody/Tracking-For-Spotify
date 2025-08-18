@@ -20,6 +20,8 @@ CLIENT_ID = environ.get("CLIENT_ID")
 CLIENT_SECRET = environ.get("CLIENT_SECRET")
 REDIRECT_URI = environ.get("REDIRECT_URI")
 
+DATE_RANGES = ["short_term", "medium_term", "long_term"]
+
 sp = Spotify()
 db = DB()
 
@@ -113,6 +115,7 @@ def me() -> tuple[Response, int]:
     profile_image = None
     if user_account.get("images") and isinstance(user_account["images"], list) and len(user_account["images"]) > 0:
         profile_image = user_account["images"][0]["url"]
+        
     return jsonify({
         "status": "success",
         "user": {
@@ -132,7 +135,7 @@ def get_song_tracking_table(date_range) -> tuple[Response, int]:
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
     
-    if date_range not in ["short_term", "medium_term", "long_term"]:
+    if date_range not in DATE_RANGES:
         return jsonify({"status":"error", "error":"Invalid date range"}), 400
 
     tracks = sp.get_user_top_songs(oauth_token, date_range, 50)
@@ -148,7 +151,7 @@ def get_artist_tracking_table(date_range) -> tuple[Response, int]:
     if not oauth_token:
         return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
 
-    if date_range not in ["short_term", "medium_term", "long_term"]:
+    if date_range not in DATE_RANGES:
         return jsonify({"status":"error", "error":"Invalid date range"}), 400
 
     artists = sp.get_user_top_artists(oauth_token, date_range, 50)

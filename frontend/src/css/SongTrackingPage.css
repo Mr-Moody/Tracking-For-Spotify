@@ -11,7 +11,7 @@ body.song-tracking, html.song-tracking {
 #song-table-body {
     background-color: #181818;
     width: 90%;
-    margin: 0px auto 35px auto;
+    margin: 0px auto 60px auto;
     padding-bottom: 5%;
     padding-left: 5%;
     padding-right: 5%;
@@ -20,27 +20,68 @@ body.song-tracking, html.song-tracking {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.song-list {
+    background-color: #181818;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .table-row {
+        grid-template-columns: 50px 50px 60px 1fr 1fr 1fr;
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .song-cover-art {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 60px 60px 80px 1fr 1fr 1fr;
+    align-items: center;
+    background-color: #242424;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    padding: 5px;
+    gap: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.table-row:hover {
+    transform: translateY(-1px) scale(1.005);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+    background-color: #2a2a2a;
+
+    .song-image-holder{
+        background-color: #2a2a2a;
+    }
+}
+
 .song-image-holder {
+    background-color: #242424;
     height: fit-content;
     width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
 }
 
 .song-cell {
     color: white;
-    background-color: #181818;
+    background-color: transparent;
     vertical-align: middle;
     text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 5px;
-}
-
-.song-image-holder {
-    padding: 0;
-    height: 30px;
-    background-color: #181818;
-    text-align: center;
-    vertical-align: middle;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .song-cover-art {
@@ -48,10 +89,14 @@ body.song-tracking, html.song-tracking {
     height: 50px;
     object-fit: cover;
     display: block;
-    margin: 0 0 10px 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
 .song-button-holder {
+    background-color: #181818;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -83,6 +128,7 @@ body.song-tracking, html.song-tracking {
 }
 
 .song-stats-graph-button {
+    background-color: #242424;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -91,10 +137,15 @@ body.song-tracking, html.song-tracking {
     font-size: 1.5rem;
     transition: color 0.2s;
 }
+
 .song-stats-graph-button:hover {
     color: #1db954;
 }
-.song-cell {
-    color: white;
-    background-color: #181818;
+
+.song-stats-graph-button svg{
+    background-color: #242424;
+}
+
+.song-stats-graph-button svg{
+    background-color: #242424;
 }

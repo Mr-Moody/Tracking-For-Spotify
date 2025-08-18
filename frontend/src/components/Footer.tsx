@@ -75,26 +75,29 @@ function Footer() {
 
     return (
         <footer>
-            <div className="currently-playing-box">
-                {currentlyPlaying && currentlyPlaying.item && (
-                    <>
-                        <img
-                            ref={imgRef}
-                            className="current-song-image"
-                            src={currentlyPlaying.item.album.images[0].url}
-                            alt="Current Song"
-                        />
-                        <div className="name-album-text-holder">
-                            <span className="current-song-name">{currentlyPlaying.item.name}</span>
-                            <span className="current-song-artist">{currentlyPlaying.item.artists.map((artist: any) => artist.name).join(", ")}</span>
-                            <span className="current-song-album">{currentlyPlaying.item.album.name}</span>
-                        </div>
-                        <div className="progress-bar-container">
-                            <div className="progress-bar" style={{ width: `${progressPercent}%`, background: progressBarColor }}></div>
-                        </div>
-                    </>
-                )}
-            </div>
+            {currentlyPlaying && currentlyPlaying.item ? (
+            <>
+                <div className="currently-playing-box">
+                          
+                    <img
+                        ref={imgRef}
+                        className="current-song-image"
+                        src={currentlyPlaying.item.album.images[0].url}
+                        alt="Current Song"
+                    />
+                    <div className="name-album-text-holder">
+                        <span className="current-song-name">{currentlyPlaying.item.name}</span>
+                        <span className="current-song-artist">{currentlyPlaying.item.artists.map((artist: any) => artist.name).join(", ")}</span>
+                        <span className="current-song-album">{currentlyPlaying.item.album.name}</span>
+                    </div>
+                    <div className="progress-bar-container">
+                        <div className="progress-bar" style={{ width: `${progressPercent}%`, background: progressBarColor }}></div>
+                    </div>
+                
+                </div>
+            </>) : (
+                <div className="currently-playing-placeholder"></div>
+            )}
       </footer>
     );
 }
