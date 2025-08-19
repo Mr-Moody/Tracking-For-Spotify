@@ -73,15 +73,24 @@ const SongTrackingPage: React.FC = () => {
     };
 
     const viewTrackingHistory = async (id: string) => {
+        const requestBody = { type: "song", term: selectedTerm, id };
+        
         try {
             const response = await fetch(`${API_URL}/api/tracking-graph`, {
+                method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "song", term: selectedTerm, id })
+                body: JSON.stringify(requestBody)
             });
+
             const data = await response.json();
-            setGraphData({ dates: data.dates, ranks: data.ranks });
-            setGraphSongId(id);
+
+            if (data.status === "success" && data.graph) {
+                setGraphData({ dates: data.graph.dates, ranks: data.graph.ranks });
+                setGraphSongId(id);
+            } else {
+                console.error("No graph data available for this song");
+            }
         } catch (error) {
             console.error("Failed to fetch graph data:", error);
         }
@@ -111,17 +120,35 @@ const SongTrackingPage: React.FC = () => {
 
     const chartOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
-            title: { display: true, text: "Song Tracking History" },
+            title: { 
+                display: true, 
+                text: "Song Tracking History",
+                color: "#ffffff",
+                font: {
+                    size: 18,
+                    weight: "bold" as const
+                },
+                padding: 20
+            },
         },
         scales: {
             y: {
                 beginAtZero: true,
                 min: 1,
                 reverse: true,
+                grid: {
+                    color: "rgba(255, 255, 255, 0.1)",
+                    drawBorder: false
+                },
                 ticks: {
                     stepSize: 1,
+                    color: "#b3b3b3",
+                    font: {
+                        size: 12
+                    },
                     callback: function(tickValue: string | number) {
                         if (typeof tickValue === "number" && Number.isInteger(tickValue)) {
                             return tickValue;
@@ -131,9 +158,29 @@ const SongTrackingPage: React.FC = () => {
                 }
             },
             x: {
+                grid: {
+                    color: "rgba(255, 255, 255, 0.1)",
+                    drawBorder: false
+                },
                 ticks: {
-                    maxTicksLimit: 8
+                    maxTicksLimit: 8,
+                    color: "#b3b3b3",
+                    font: {
+                        size: 12
+                    }
                 }
+            }
+        },
+        elements: {
+            point: {
+                backgroundColor: "#1db954",
+                borderColor: "#ffffff",
+                borderWidth: 2,
+                radius: 3,
+                hoverRadius: 5
+            },
+            line: {
+                borderWidth: 3
             }
         }
     };
@@ -155,8 +202,8 @@ const SongTrackingPage: React.FC = () => {
                 </div>
             </div>
             {graphData && (
-                <div id="song-graph-holder" style={{ visibility: "visible", height: "300px", width: "400px", transition: "0.5s" }}>
-                    <div id="close-graph-button" onClick={closeGraph} style={{ cursor: "pointer" }}>x</div>
+                <div id="song-graph-holder">
+                    <button id="close-graph-button" onClick={closeGraph}>×</button>
                     <Line data={chartData!} options={chartOptions} />
                 </div>
             )}

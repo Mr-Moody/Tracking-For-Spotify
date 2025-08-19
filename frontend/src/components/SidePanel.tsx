@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import React, { useState } from "react";
 import "../css/SidePanel.css";
 import { MdPersonOutline } from "react-icons/md";
+import { useUser } from "../UserContext";
 
 interface User {
   external_urls: { spotify: string };
@@ -17,40 +18,66 @@ interface SidePanelProps {
 }
 
 const SidePanel: React.FC<SidePanelProps> = ({ user, closeSettings, open }) => {
-  const signOut = () => {};
   const [imgLoaded, setImgLoaded] = useState(false);
+  const { clearUser } = useUser();
 
   const location = useLocation();
 
+  const signOut = async () => {
+        try {
+            clearUser();
+            
+            const response = await fetch("/api/sign-out", {
+                method: "GET",
+                credentials: "include",
+            });
+            
+            if (response.ok) {
+                // clear session data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // prevent auto-login
+                sessionStorage.setItem("signedOut", "true");
+                
+                window.location.replace("/login");
+            } else {
+                console.error("Failed to sign out from backend");
+            }
+        } catch (error) {
+            console.error("Error during sign out:", error);
+        }
+  };
+
   return (
     <div className={`side-panel${open ? ' open' : ''}`}>
-      <div className={`close-settings-button${open ? ' rotated' : ''}`} onClick={closeSettings}>&#9776;</div>
-      <div className="user-container">
-        {user ? (
-          <div className="profile-card" title="Open Spotify Account" onClick={() => window.open(user.external_urls.spotify)}>
-            {user.profile_image ? (
-              <img
-                className={`user-profile${imgLoaded ? ' loaded' : ''}`}
-                src={user.profile_image}
-                alt="profile"
-                onLoad={() => setImgLoaded(true)}
-              />
-            ) : (
-              <span className="user-profile-fallback">
-                <MdPersonOutline size={48} />
-              </span>
-            )}
-            <span className="user-name">
-              {user.display_name ? user.display_name : user.user_name}
-            </span>
-          </div>) : (<span>User not logged in...</span>)}
-      </div>
-      <div className="page-locator-box">
-        <Link className={`page-locator${location.pathname.startsWith("/song-tracking") ? " active" : ""}`}id="song-tracking" to="/song-tracking">Song Tracking</Link>
-        <Link className={`page-locator${location.pathname.startsWith("/artist-tracking") ? " active" : ""}`} id="artist-tracking" to="/artist-tracking">Artist Tracking</Link>
-        <Link className={`page-locator${location.pathname.startsWith("/genre-tracking") ? " active" : ""}`} id="genre-tracking" to="/genre-tracking">Genre Tracking</Link>
-      </div>
-      <button className="sign-out-button" onClick={signOut}>Sign Out</button>
+        <div className={`close-settings-button${open ? ' rotated' : ''}`} onClick={closeSettings}>&#9776;</div>
+        <div className="user-container">
+            {user ? (
+            <div className="profile-card" title="Open Spotify Account" onClick={() => window.open(user.external_urls.spotify)}>
+                {user.profile_image ? (
+                    <img
+                        className={`user-profile${imgLoaded ? ' loaded' : ''}`}
+                        src={user.profile_image}
+                        alt="profile"
+                        onLoad={() => setImgLoaded(true)}
+                    />
+                ) : (
+                    <span className="user-profile-fallback">
+                        <MdPersonOutline size={48} />
+                    </span>
+                )}
+                <span className="user-name">
+                    {user.display_name ? user.display_name : user.user_name}
+                </span>
+            </div>) : (<span>User not logged in...</span>)}
+        </div>
+        <div className="page-locator-box">
+            <Link className={`page-locator${location.pathname.startsWith("/song-tracking") ? " active" : ""}`}id="song-tracking" to="/song-tracking">Song Tracking</Link>
+            <Link className={`page-locator${location.pathname.startsWith("/artist-tracking") ? " active" : ""}`} id="artist-tracking" to="/artist-tracking">Artist Tracking</Link>
+            <Link className={`page-locator${location.pathname.startsWith("/genre-tracking") ? " active" : ""}`} id="genre-tracking" to="/genre-tracking">Genre Tracking</Link>
+        </div>
+        <button className="sign-out-button" onClick={signOut}>Sign Out</button>
     </div>
   );
 };

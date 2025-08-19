@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
 
 function LoginPage() {
+    const { user, resetSignOutFlag } = useUser();
 
     const handleLogin = () => {
+        // Reset sign out flag as user is logging in
+        resetSignOutFlag();
         window.location.href = `${API_URL}/auth/spotify-login`;
     }
 
-    const { user } = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {

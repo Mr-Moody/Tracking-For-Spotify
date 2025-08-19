@@ -12,10 +12,17 @@ interface SongTrackingCardProps {
 }
 
 function SongTrackingCard(props: SongTrackingCardProps) {
+    const handleRowClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        props.viewTrackingHistory(props.id);
+    };
+
     return (
-        <div className="table-row" key={props.id}>
+        <div className="table-row" key={props.id} onClick={handleRowClick} style={{ userSelect: "none" }}>
             <div className="song-cell">
-                <div className="song-stats-graph-button" id={props.id} onClick={() => props.viewTrackingHistory(props.id)}>
+                <div className="song-stats-graph-button">
                     <MdIcons.MdOutlineBarChart />
                 </div>
             </div>

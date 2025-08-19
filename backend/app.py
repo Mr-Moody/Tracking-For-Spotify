@@ -70,8 +70,77 @@ def spotify_authorized() -> tuple[Response, int]:
     
     print(f"oauth_token: {session['oauth_token']}, user_id: {session['user_id']}")
 
+    # Update the user's tracking data in the database (only once per day)
+    try:
+        update_user_tracking_data(user_account["id"], token["access_token"])
+        print(f"Database tracking updated for user: {user_account['id']}")
+    except Exception as e:
+        print(f"Error updating database tracking: {e}")
+
     #redirect to the song tracking page
     return redirect(f"{FRONTEND_URL}/song-tracking"), 302
+
+
+def update_user_tracking_data(user_id: str, oauth_token: str) -> None:
+    """
+    Updates the user's song, artist, and genre tracking data. Runs max once a day.
+    """
+    
+    last_online = db.get_user_last_online(user_id)
+    current_date = db.current_date()
+
+    if last_online == current_date:
+        return None
+    else:
+        for term in ["short_term", "medium_term", "long_term"]:
+            try:
+                # Get top songs, artists, and genres from Spotify API
+                songs = sp.get_user_top_songs(oauth_token, term, 50)
+                artists = sp.get_user_top_artists(oauth_token, term, 50)
+                genres = sp.get_user_top_genres(oauth_token, term, 50)
+
+                # Update song tracking
+                if "items" in songs:
+                    for rank in range(len(songs["items"])):
+                        song_id = songs["items"][rank]["id"]
+                        rank_value = rank + 1  # Convert to 1-based ranking
+
+                        tracking_id = db.get_tracking_id(user_id, song_id, "song", term)
+                        
+                        if tracking_id != "":
+                            db.store_tracking_history(tracking_id, rank_value)
+                        else:
+                            db.create_new_tracking_history(user_id, song_id, "song", term, rank_value)
+
+                # Update artist tracking
+                if "items" in artists:
+                    for rank in range(len(artists["items"])):
+                        artist_id = artists["items"][rank]["id"]
+                        rank_value = rank + 1
+
+                        tracking_id = db.get_tracking_id(user_id, artist_id, "artist", term)
+                        if tracking_id != "":
+                            db.store_tracking_history(tracking_id, rank_value)
+                        else:
+                            db.create_new_tracking_history(user_id, artist_id, "artist", term, rank_value)
+
+                # Update genre tracking
+                for rank in range(len(genres)):
+                    genre_id = genres[rank]["name"]
+                    rank_value = rank + 1
+
+                    tracking_id = db.get_tracking_id(user_id, genre_id, "genre", term)
+                    if tracking_id != "":
+                        db.store_tracking_history(tracking_id, rank_value)
+                    else:
+                        db.create_new_tracking_history(user_id, genre_id, "genre", term, rank_value)
+
+            except Exception as e:
+                print(f"Error updating {term} tracking: {e}")
+                continue
+
+        # Update the user's last online date
+        db.update_last_online(user_id, current_date)
 
 def get_valid_oauth_token():
     oauth_token = session.get("oauth_token")
@@ -320,7 +389,34 @@ def delete_tag() -> tuple[Response, int]:
     return jsonify({"status":"success", "tags":tags}), 200
 
 
-@app.route("/api/sign-out")
+@app.route("/api/update-tracking-data", methods=["POST"])
+def update_tracking_data() -> tuple[Response, int]:
+    """
+    Manually triggers an update of the user's tracking data in the database
+    This will only update if the user hasn't been updated today
+    """
+    oauth_token = get_valid_oauth_token()
+    if not oauth_token:
+        return jsonify({"status": "error", "error": "User not authorised, missing oauth_token"}), 401
+
+    try:
+        user_account = sp.get_user_account(oauth_token)
+        if "error" in user_account:
+            return jsonify({"status": "error", "error": "Failed to get user account"}), 400
+        
+        user_id = user_account["id"]
+        
+        # This will only update if the user hasn't been updated today
+        update_user_tracking_data(user_id, oauth_token)
+        
+        return jsonify({"status": "success", "message": "Tracking data updated successfully"}), 200
+        
+    except Exception as e:
+        print(f"Error updating tracking data: {e}")
+        return jsonify({"status": "error", "error": "Failed to update tracking data"}), 500
+
+
+@app.route("/api/sign-out", methods=["GET"])
 def sign_out() -> tuple[Response, int]:
     """
     Removes all of the data from the user's current session and will be forced to login again
